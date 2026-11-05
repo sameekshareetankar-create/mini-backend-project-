@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{% static 'home.css' %}">
+    <link rel="stylesheet" href="{% static 'navbar.css' %}">
+</head>
+
+<body>
+    <div class="parent_box">
+        {% include 'navbar.html' %}
+        <div class="task_box">
+            <h1>All Tasks</h1>
+            <table>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Done</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+                {% for task in data %}
+                <tr>
+                    <td>{{ task.title }}</td>
+                    <td>{{ task.description }}</td>
+                    <td>{% if task.done %} Completed {% else %} Pending {% endif %}</td>
+                    <td>
+                        <form action="{% url 'task_completed' task.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="checkbox" onchange="this.form.submit()" value="True" name="checkbox" {% if task.done %} checked {% endif %}>
+                        </form>
+                    </td>
+                    <td><a href="{% url 'edit_task' task.id %}">Edit</a> | <a href="{% url 'delete_task' task.id %}">Delete</a></td>
+                </tr>
+                {% empty %}
+                <tr class="no_task_text">
+                    <td colspan="5">No tasks available.</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
